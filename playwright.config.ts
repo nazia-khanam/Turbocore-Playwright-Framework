@@ -30,7 +30,6 @@ export default defineConfig({
     browserName:'chromium',
     viewport: { width: 1280, height: 720 },
     actionTimeout: 60000,
- 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on',
     headless :true,
