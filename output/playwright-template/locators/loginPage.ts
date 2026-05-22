@@ -15,7 +15,7 @@ export class LoginPage {
         this.headerVerification = page.locator('header[id="screen-header"]>h1')
         this.emailInput = page.locator('input[id="username"]');
         this.PasswordInput = page.locator('input[id="password"]');
-        this.continueBtn = page.getByText('Continue')
+        this.continueBtn = page.getByRole('button', { name: 'Continue' })
  
     }
 }
