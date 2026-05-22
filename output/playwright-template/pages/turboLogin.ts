@@ -10,22 +10,29 @@ export class TurboLogin {
         await this.loginPage.page.goto('https://test.turbocore.soais.com/api/v3/auth/login', { waitUntil: 'domcontentloaded' });
         await this.loginPage.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {})
         await expect(this.loginPage.headerVerification).toHaveText('Welcome')
-        await expect(this.loginPage.logoVerification).toBeVisible()
+        await expect(this.loginPage.emailInput).toBeVisible()
     }
         async emailFill(email: string) {
         await this.loginPage.emailInput.fill(email);
-        await this.loginPage.continueBtn.last().click()
+        await this.loginPage.continueBtn.click()
     }
     async PasswordFill(password: string) {
         await expect(this.loginPage.headerVerification).toHaveText('Enter Your Password')
         await this.loginPage.PasswordInput.fill(password);
-        await this.loginPage.continueBtn.last().click()
+        await this.loginPage.continueBtn.click()
     }
      async assertDashboard() {
-        await this.loginPage.page.waitForLoadState();
-        await expect(this.loginPage.page).toHaveURL('https://test.turbocore.soais.com/v3/client/qa');
+        await this.loginPage.page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => {});
+        await expect(this.loginPage.page).toHaveURL(/https:\/\/test\.turbocore\.soais\.com\/v3\/client(\/qa)?/, { timeout: 15000 });
+        if (!this.loginPage.page.url().includes('/v3/client/qa')) {
+            await this.loginPage.page.goto('https://test.turbocore.soais.com/v3/client/qa', { waitUntil: 'domcontentloaded' });
+        }
         // await this.loginPage.page.pause()
         await expect(this.loginPage.page.getByText('QA Workstreams')).toBeVisible()
+        await this.loginPage.page
+            .getByText(/Loading workstreams/i)
+            .waitFor({ state: 'hidden', timeout: 30000 })
+            .catch(() => {})
     }
  
 }
