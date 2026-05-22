@@ -12,7 +12,7 @@ test.describe("Notification Functionality", async () => {
         notificationsPage = new NotificationsPage(new Notification(page))
         await loginPage.navigateToLogin()
     })
-    test('TC_NOTIF_Verify Bell icon unread badge display', async ({ page }) => {
+    test('TC_NOTIF_Verify Bell icon placement', async ({ page }) => {
         await loginPage.emailFill(LoginData.Email1)
         await loginPage.PasswordFill(LoginData.password1)
         await loginPage.assertDashboard()

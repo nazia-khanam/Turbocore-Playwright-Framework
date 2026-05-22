@@ -4,6 +4,7 @@ export class ChatCreation {
     readonly page: Page;
     readonly newQaWorkStream: Locator;
     readonly startNewChat: Locator;
+    readonly enterChatName: Locator;
     readonly EnterChatName: Locator;
     readonly agentRunTime: Locator;
     readonly requestCollaborators: Locator;
@@ -14,6 +15,8 @@ export class ChatCreation {
     constructor(page: Page) {
         this.page = page
         this.newQaWorkStream = page.locator('button[aria-label="New QA Workstream"]')
+        this.startNewChat = page.getByRole('button', { name: 'Start a New Chat' })
+        this.enterChatName = page.locator('input[placeholder*="chat" i], input[placeholder*="workstream" i], input[name*="chat" i], input[name*="workstream" i]').first()
         this.startNewChat = page.getByRole('button', { name: /Start a New Chat/i })
         this.EnterChatName = page.locator('input[id="request-title"]')
         this.agentRunTime = page.locator('select[id="request-runtime"]')

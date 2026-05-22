@@ -7,7 +7,7 @@ export class TurboLogin {
         this.loginPage = loginPage;
     }
        async navigateToLogin() {
-        await this.loginPage.page.goto('https://test.turbocore.soais.com/api/v3/auth/login', { waitUntil: 'domcontentloaded' });
+        await this.loginPage.page.goto('https://test.turbocore.soais.com/api/v3/auth/login', { waitUntil: 'commit', timeout: 60000 });
         await this.loginPage.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {})
         await expect(this.loginPage.headerVerification).toHaveText('Welcome')
         await expect(this.loginPage.emailInput).toBeVisible()
@@ -19,6 +19,10 @@ export class TurboLogin {
     async PasswordFill(password: string) {
         await expect(this.loginPage.headerVerification).toHaveText('Enter Your Password')
         await this.loginPage.PasswordInput.fill(password);
+        await this.loginPage.continueBtn.last().click({ noWaitAfter: true })
+    }
+     async assertDashboard() {
+        await expect(this.loginPage.page).toHaveURL('https://test.turbocore.soais.com/v3/client/qa', { timeout: 60000 });
         await this.loginPage.continueBtn.click()
     }
      async assertDashboard() {
