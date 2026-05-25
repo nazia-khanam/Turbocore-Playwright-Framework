@@ -25,10 +25,12 @@ export class TurboLogin {
         await this.loginPage.page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => {});
         await expect(this.loginPage.page).toHaveURL(/https:\/\/test\.turbocore\.soais\.com\/v3\/client(\/qa)?/, { timeout: 15000 });
         if (!this.loginPage.page.url().includes('/v3/client/qa')) {
-            await this.loginPage.page.goto('https://test.turbocore.soais.com/v3/client/qa', { waitUntil: 'domcontentloaded' });
+            await Promise.all([
+                this.loginPage.page.waitForURL(/https:\/\/test\.turbocore\.soais\.com\/v3\/client\/qa/, { timeout: 15000 }).catch(() => {}),
+                this.loginPage.page.goto('https://test.turbocore.soais.com/v3/client/qa', { waitUntil: 'networkidle' }).catch(() => {}),
+            ])
         }
-        // await this.loginPage.page.pause()
-        await expect(this.loginPage.page.getByText('QA Workstreams')).toBeVisible()
+        await expect(this.loginPage.page.getByText('QA Workstreams')).toBeVisible({ timeout: 15000 })
         await this.loginPage.page
             .getByText(/Loading workstreams/i)
             .waitFor({ state: 'hidden', timeout: 30000 })

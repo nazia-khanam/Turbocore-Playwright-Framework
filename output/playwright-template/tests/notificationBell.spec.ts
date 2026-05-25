@@ -26,7 +26,7 @@ test.describe("Notification Functionality", () => {
 
         await loginPage1.assertDashboard()
 
-        await chatCreationPage1.createNewChat(ChatCreationData.TestChat, ChatCreationData.TestAgent, ChatCreationData.Collaborators)
+        await chatCreationPage1.createNewChat(ChatCreationData.TestChat, ChatCreationData.TestAgent, ChatCreationData.Collaborators1)
 
 
         // =========================
