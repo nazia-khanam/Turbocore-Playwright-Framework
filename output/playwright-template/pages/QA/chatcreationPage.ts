@@ -6,27 +6,21 @@ export class newChatCreationPage {
         this.chatCreation = chatCreation;
     }
     async createNewChat(chatName: string, agentRuntime: string, collaborators: string) {
-        await expect(this.chatCreation.newQaWorkStream).toBeVisible({ timeout: 60000 })
-        await this.chatCreation.newQaWorkStream.click({ timeout: 50000 })
-        await expect(this.chatCreation.startNewChat).toBeVisible({ timeout: 30000 })
-        await this.chatCreation.startNewChat.click()
-        await expect(this.chatCreation.enterChatName).toBeVisible({ timeout: 30000 })
-        await this.chatCreation.enterChatName.fill(chatName)
         await this.chatCreation.page
             .getByText(/Loading workstreams/i)
             .waitFor({ state: 'hidden', timeout: 30000 })
             .catch(() => {})
 
-        if (await this.chatCreation.startNewChat.isVisible().catch(() => false)) {
-            await this.chatCreation.startNewChat.click()
-        }
-
         if (!await this.chatCreation.EnterChatName.isVisible({ timeout: 3000 }).catch(() => false)) {
-            await expect(this.chatCreation.newQaWorkStream).toBeVisible()
-            await this.chatCreation.newQaWorkStream.click()
+            if (await this.chatCreation.startNewChat.isVisible().catch(() => false)) {
+                await this.chatCreation.startNewChat.click()
+            } else {
+                await expect(this.chatCreation.newQaWorkStream).toBeVisible({ timeout: 60000 })
+                await this.chatCreation.newQaWorkStream.click({ timeout: 50000 })
+            }
         }
 
-        await expect(this.chatCreation.EnterChatName).toBeVisible({ timeout: 10000 })
+        await expect(this.chatCreation.EnterChatName).toBeVisible({ timeout: 30000 })
         await this.chatCreation.EnterChatName.fill(chatName)
         await this.chatCreation.agentRunTime.selectOption(agentRuntime)
         await this.chatCreation.requestCollaborators.fill(collaborators)
