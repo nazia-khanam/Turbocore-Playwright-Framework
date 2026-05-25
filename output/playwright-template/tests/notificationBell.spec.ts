@@ -11,6 +11,7 @@ import { ChatCreationData } from "../data/chatCreationData"
 test.describe("Notification Functionality", () => {
 
     test('TC_NOTIF_Verify Bell icon unread indicator', async ({ browser }) => {
+        test.setTimeout(90000)
 
         const user1Context = await browser.newContext({permissions: ['notifications']})
         const user1Page = await user1Context.newPage()

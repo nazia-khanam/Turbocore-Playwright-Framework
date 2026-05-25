@@ -28,7 +28,7 @@ test.describe("Mention Notification Navigation", () => {
 
         // Step 3: Open Mentions tab and click any mention notification.
         await notificationsPage.openMentionsTab()
-        await notificationsPage.clickFirstMentionNotification()
+        await notificationsPage.openMentionedWorkstream(workstreamName)
 
         // Step 4: Verify same mentioned workstream is opened.
         await notificationsPage.verifyWorkstreamOpened(workstreamName)

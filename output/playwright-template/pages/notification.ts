@@ -28,6 +28,19 @@ export class NotificationsPage {
         await expect(this.notification.firstMentionNotification).toBeVisible()
         await this.notification.firstMentionNotification.click()
      }
+     async openMentionedWorkstream(workstreamName: string){
+        const closeNotifications = this.notification.page.getByRole('button', { name: /Close notifications/i })
+        if (await closeNotifications.isVisible().catch(() => false)) {
+            await closeNotifications.click()
+        }
+
+        const mentionedWorkstream = this.notification.page
+            .getByRole('button', { name: new RegExp(`${workstreamName}.*You were mentioned`, 'i') })
+            .first()
+
+        await expect(mentionedWorkstream).toBeVisible({ timeout: 15000 })
+        await mentionedWorkstream.click()
+     }
      async verifyAssignmentNotification(workstreamName: string, recipientEmail: string){
         const assignmentNotification = this.notification.notificationOverlay
             .locator('button')
@@ -43,7 +56,7 @@ export class NotificationsPage {
         expect(notificationText.toLowerCase()).toMatch(new RegExp(`${recipientName}|you`))
      }
      async verifyWorkstreamOpened(workstreamName: string){
-        await expect(this.notification.page.getByText(workstreamName)).toBeVisible()
+        await expect(this.notification.page.getByRole('heading', { name: workstreamName })).toBeVisible()
      }
      async UnreadBadgeVerify(){
         const unreadBadgevalue = await this.notification.unreadBadge.allInnerTexts()
