@@ -61,4 +61,29 @@ export class newChatCreationPage {
        await this.chatCreation.page.locator('button[type="button"][aria-haspopup="menu"]').last().click()
        await this.chatCreation.page.getByText('Assign').last().click
     }
+
+    async changeWorkstreamStatus(workstreamName: string, newStatus: string, comment: string = 'Updating status') {
+        await this.chatCreation.page
+            .locator('button')
+            .filter({ hasText: workstreamName })
+            .first()
+            .click()
+
+        const changeStatusButton = this.chatCreation.page.getByRole('button', { name: 'Change status' }).first()
+        await expect(changeStatusButton).toBeVisible({ timeout: 15000 })
+        await changeStatusButton.click()
+
+        const statusDialog = this.chatCreation.page
+            .locator('div')
+            .filter({ hasText: /Change workstream status/i })
+            .first()
+        await expect(statusDialog).toBeVisible({ timeout: 15000 })
+
+        await statusDialog.getByRole('button', { name: newStatus }).click()
+        const commentField = statusDialog.getByPlaceholder('Add a comment')
+        await expect(commentField).toBeVisible({ timeout: 10000 })
+        await commentField.fill(comment)
+
+        await statusDialog.locator('button').filter({ hasText: 'Change status' }).last().click()
+    }
 }
