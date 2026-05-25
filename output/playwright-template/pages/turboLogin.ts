@@ -21,10 +21,10 @@ export class TurboLogin {
         await this.loginPage.PasswordInput.fill(password);
         await this.loginPage.continueBtn.last().click({ noWaitAfter: true })
     }
-     async assertDashboard() {
-        await expect(this.loginPage.page).toHaveURL('https://test.turbocore.soais.com/v3/client/qa', { timeout: 60000 });
-        await this.loginPage.continueBtn.click()
-    }
+    //  async assertDashboard() {
+    //     await expect(this.loginPage.page).toHaveURL('https://test.turbocore.soais.com/v3/client/qa', { timeout: 60000 });
+    //     await this.loginPage.continueBtn.click()
+    // }
      async assertDashboard() {
         await this.loginPage.page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => {});
         await expect(this.loginPage.page).toHaveURL(/https:\/\/test\.turbocore\.soais\.com\/v3\/client(\/qa)?/, { timeout: 15000 });
