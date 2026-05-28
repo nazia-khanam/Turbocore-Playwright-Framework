@@ -12,6 +12,8 @@ export class ChatCreation {
     readonly createChatBtn: Locator;
     readonly inviteCollaboratorsBtn: Locator;
     readonly assignMenuItem: Locator;
+    readonly username: Locator;
+    readonly sharesuggestion : Locator
     constructor(page: Page) {
         this.page = page
         this.newQaWorkStream = page.locator('button[aria-label="New QA Workstream"]')
@@ -24,6 +26,8 @@ export class ChatCreation {
         this.createChatBtn = page.getByText('Create Chat')
         this.inviteCollaboratorsBtn = page.getByRole('button', { name: /Share and invite collaborators/i })
         this.assignMenuItem = page.getByRole('menuitem').filter({ hasText: 'Assign' })
-        this.requestCollaboratorsBtn = page.locator('button[type="button"]>span[class="text-xs text-muted-foreground"]')
+        this.requestCollaboratorsBtn = page.locator('button[id="new-request-collaborator-suggestion-0"]')
+        this.sharesuggestion = page.locator('button[id="share-suggestion-0"]')
+        this.username =page.getByPlaceholder('Add user email ID here')
     }
 }

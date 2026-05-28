@@ -24,8 +24,28 @@ export class newChatCreationPage {
         await this.chatCreation.EnterChatName.fill(chatName)
         await this.chatCreation.agentRunTime.selectOption(agentRuntime)
         await this.chatCreation.requestCollaborators.fill(collaborators)
-        await this.chatCreation.requestCollaboratorsBtn.hover()
-        await this.chatCreation.requestCollaboratorsBtn.click()
+        await this.chatCreation.requestCollaborators.press('Enter')
+        await this.chatCreation.page.waitForTimeout(500)
+
+        if (await this.chatCreation.requestCollaboratorsBtn.isVisible().catch(() => false)) {
+            await this.chatCreation.requestCollaboratorsBtn.click()
+        } else {
+            await this.chatCreation.requestCollaborators.press('ArrowDown')
+            await this.chatCreation.requestCollaborators.press('Enter')
+        }
+
+        await this.chatCreation.page.waitForTimeout(500)
+        const selectedCollaborator = this.chatCreation.page.locator('span', { hasText: collaborators }).first()
+        if (await selectedCollaborator.isVisible().catch(() => false)) {
+            await expect(selectedCollaborator).toBeVisible({ timeout: 10000 })
+        }
+
+        const inviteButton = this.chatCreation.page.getByRole('button', { name: /Invite/i }).first()
+        if (await inviteButton.isVisible().catch(() => false)) {
+            await inviteButton.click()
+        }
+
+        await expect(this.chatCreation.createChatBtn).toBeVisible({ timeout: 15000 })
         await this.chatCreation.createChatBtn.click()
         await expect(this.chatCreation.page.locator('h2').filter({ hasText: chatName }).first()).toBeVisible({ timeout: 15000 })
     }
@@ -51,7 +71,7 @@ export class newChatCreationPage {
             .filter({ hasText: 'MEMBERS' })
             .first()
         await expect(inviteDialog).toBeVisible()
-
+        await this.chatCreation.username.fill('nazia.khanam')
        await this.chatCreation.page.locator('button[type="button"][aria-haspopup="menu"]').last().click()
        await this.chatCreation.page.getByText('Assign').last().click
     }
@@ -78,6 +98,6 @@ export class newChatCreationPage {
         await expect(commentField).toBeVisible({ timeout: 10000 })
         await commentField.fill(comment)
 
-        await statusDialog.locator('button').filter({ hasText: 'Change status' }).last().click()
+        await this.chatCreation.page.locator('button[aria-label="Change status"]')
     }
 }

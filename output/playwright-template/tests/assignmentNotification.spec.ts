@@ -29,7 +29,7 @@ test.describe("Assignment Notification", () => {
         await actorLoginPage.emailFill(actorEmail)
         await actorLoginPage.PasswordFill(actorPassword)
         await actorLoginPage.assertDashboard()
-        await chatCreationPage.createNewChat(workstreamName, ChatCreationData.TestAgent, recipientEmail)
+        await chatCreationPage.createNewChat(workstreamName, ChatCreationData.TestAgent,ChatCreationData.Collaborators3)
         await chatCreationPage.assignMemberToWorkstream(workstreamName, memberName)
         await actorContext.close()
 

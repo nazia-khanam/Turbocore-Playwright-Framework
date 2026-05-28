@@ -13,7 +13,9 @@ export class Notification {
     constructor(page: Page) {
         this.page = page
         this.notificationBell = page.locator('button[aria-label="Notifications"][title="Notifications"]')
-        this.unreadBadge = page.locator('button[title="Notifications"]>span>span')
+        this.unreadBadge = this.notificationBell.locator(
+            '[title*="Unread" i], [aria-label*="Unread" i], span.bg-button-primary, [class*="badge" i]'
+        )
         this.notificationOverlay = page
             .locator('div')
             .filter({ hasText: 'Your notifications' })

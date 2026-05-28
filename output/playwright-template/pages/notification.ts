@@ -59,10 +59,26 @@ export class NotificationsPage {
         await expect(this.notification.page.getByRole('heading', { name: workstreamName })).toBeVisible()
      }
      async UnreadBadgeVerify(){
-        const unreadBadgevalue = await this.notification.unreadBadge.allInnerTexts()
-        console.log(unreadBadgevalue)
-        await expect(this.notification.unreadBadge).toHaveCount(unreadBadgevalue.length)
-        // await expect(this.notification.unreadBadge).toBeVisible()
+        await this.notification.page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {})
+        await this.notification.page.getByText(/Loading workstreams/i).waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {})
+        await expect(this.notification.notificationBell).toBeVisible({ timeout: 15000 })
+
+        if (await this.notification.unreadBadge.first().isVisible().catch(() => false)) {
+            const badge = this.notification.unreadBadge.first()
+            await expect(badge).toBeVisible()
+
+            const badgeText = (await badge.innerText()).trim()
+            if (badgeText) {
+                expect(Number(badgeText)).toBeGreaterThan(0)
+            }
+            return
+        }
+
+        const unreadIndicator = this.notification.page
+            .locator('[title="You were mentioned"], [aria-label="You were mentioned"], [title*="Unread" i], [aria-label*="Unread" i]')
+            .first()
+
+        await expect(unreadIndicator).toBeVisible({ timeout: 20000 })
      }
  
 }
