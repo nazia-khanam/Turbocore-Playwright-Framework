@@ -17,6 +17,7 @@ test.describe("Notification Functionality", async () => {
         await loginPage.PasswordFill(LoginData.password1)
         await loginPage.assertDashboard()
         await notificationsPage.BellIconVerify()
+        await page.close()
     })
  
 })

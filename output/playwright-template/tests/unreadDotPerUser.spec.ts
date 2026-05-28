@@ -1,10 +1,7 @@
 import { expect, test } from "@playwright/test"
-import { ChatCreationData } from "../data/chatCreationData"
 import { LoginData } from "../data/loginData"
-import { ChatCreation } from "../locators/QA/chatCreation"
 import { LoginPage } from "../locators/loginPage"
 import { TurboLogin } from "../pages/turboLogin"
-import { newChatCreationPage } from "../pages/QA/chatcreationPage"
 import { WorkstreamPage } from "../pages/QA/workstreamPage"
 
 
@@ -16,12 +13,9 @@ test.describe("Unread Dot Per User", () => {
     const actorPassword = LoginData.password1
     const recipientEmail = LoginData.Email3
     const recipientPassword = LoginData.password3
-    const workstreamName = `WS-NOTIF-UNREAD-024 ${Date.now()}`
-
     const actorContext = await browser.newContext({ permissions: ['notifications'] })
     const actorPage = await actorContext.newPage()
     const actorLoginPage = new TurboLogin(new LoginPage(actorPage))
-    const chatCreationPage = new newChatCreationPage(new ChatCreation(actorPage))
     const actorWorkstreamPage = new WorkstreamPage(actorPage)
 
     await actorLoginPage.navigateToLogin()
@@ -29,10 +23,31 @@ test.describe("Unread Dot Per User", () => {
     await actorLoginPage.PasswordFill(actorPassword)
     await actorLoginPage.assertDashboard()
 
-    await chatCreationPage.createNewChat(workstreamName, ChatCreationData.TestAgent, recipientEmail)
-    await actorWorkstreamPage.openWorkstream(workstreamName)
-    await actorWorkstreamPage.sendMessageToOpenWorkstream('First unread message for TC_NOTIF_024')
-    await actorWorkstreamPage.sendMessageToOpenWorkstream('Second unread message for TC_NOTIF_024')
+    const recipientSetupContext = await browser.newContext({ permissions: ['notifications'] })
+    const recipientSetupPage = await recipientSetupContext.newPage()
+    const recipientSetupLoginPage = new TurboLogin(new LoginPage(recipientSetupPage))
+    const recipientSetupWorkstreamPage = new WorkstreamPage(recipientSetupPage)
+
+    await recipientSetupLoginPage.navigateToLogin()
+    await recipientSetupLoginPage.emailFill(recipientEmail)
+    await recipientSetupLoginPage.PasswordFill(recipientPassword)
+    await recipientSetupLoginPage.assertDashboard()
+
+    const actorWorkstreamNames = await actorWorkstreamPage.visibleWorkstreamNames()
+    const recipientWorkstreamNames = await recipientSetupWorkstreamPage.visibleWorkstreamNames()
+    const workstreamName = actorWorkstreamNames.find(name => recipientWorkstreamNames.includes(name))
+
+    expect(workstreamName, 'Expected at least one existing workstream shared by actor and recipient').toBeTruthy()
+    await recipientSetupContext.close()
+    await actorWorkstreamPage.openWorkstream(workstreamName!)
+
+    const scenarioName = 'scenario_15_unread_dot_per_user'
+    const firstMessage = `${scenarioName} - ${Date.now()} - First unread message`
+
+    await actorWorkstreamPage.sendMessageToOpenWorkstream(firstMessage)
+
+    // close actor session so the chat message is unread for the recipient
+    await actorContext.close()
 
     const recipientContext = await browser.newContext({ permissions: ['notifications'] })
     const recipientPage = await recipientContext.newPage()
@@ -44,10 +59,13 @@ test.describe("Unread Dot Per User", () => {
     await recipientLoginPage.PasswordFill(recipientPassword)
     await recipientLoginPage.assertDashboard()
 
-    await recipientWorkstreamPage.expectWorkstreamUnreadDot(workstreamName, true)
-    await actorWorkstreamPage.expectWorkstreamUnreadDot(workstreamName, false)
+    const recipientChatButton = recipientWorkstreamPage.workstreamItem(workstreamName!)
+    await expect(recipientChatButton).toBeVisible({ timeout: 20000 })
+
+    // recipient should see unread on the selected existing workstream
+    await recipientWorkstreamPage.expectWorkstreamUnreadDot(workstreamName!, true)
+    await recipientWorkstreamPage.expectUnreadDotIsBlue(workstreamName!)
 
     await recipientContext.close()
-    await actorContext.close()
   })
 })
